@@ -1,6 +1,6 @@
 <meta name="robots" content="noindex">
 
-### Studying the Impact of Categorical Duplicates on ML
+# Studying the Impact of Categorical Duplicates on ML
 
 In this work, we take the first step towards empirically characterizing the impact of Categorical duplicates on ML classification with a three-pronged approach. Our benchmark comprises of three components.
 
@@ -14,7 +14,7 @@ columns from 231 raw CSV files.
 
 ## Environment Setup
 
-To set up the environment, first make sure that all the packages stated in the `requirements.txt` file are installed. Use the following commands:
+To run the benchmark, first make sure that the environment is set up and all the packages stated in the `requirements.txt` file are installed. Use the following commands:
 
 ```
 virtualenv CategDedupBench
@@ -22,6 +22,13 @@ source CategDedupBench/bin/activate
 pip install -r requirements.txt
 ```
 
+## Our Labeled Datasets
+
+Please see `Our Labeled Data` to see the sub-directory organization.
+
+
+<!-- ## Downstream Benchmark Suite
+## Synthetic Study -->
 
 
 <!-- #### 1. Our Labeled Data 
