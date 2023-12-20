@@ -27,8 +27,59 @@ pip install -r requirements.txt
 Please see `Our Labeled Data` to see the sub-directory organization.
 
 
-<!-- ## Downstream Benchmark Suite
-## Synthetic Study -->
+## Downstream Benchmark Suite
+
+Available ML models (with their shorthand used in our code file) in our benchmark suite are:
+    - Logisitic Regression (LR)
+    - Random Forest (RF)
+    - Artificial neural network (ANN)
+    - Support Vector Machines (SVM)
+    - XGBoost (XGB)
+
+Available encoding methods in our benchmark suite are:
+    - One-hot encoding (OHE)
+    - Similarity encoding (SIME)
+    - String encoding (STRE)
+    - Transformer encoding (TRANSE)
+    - TABBIE (TABBIE)
+
+Our curated set of 16 downstream datasets (Please refer to our tech report for fine-grained stats on them) are:
+    - Midwest Survey (MIDWEST)
+    - Mental Health (MENTAL_HEALTH)
+    - Relocated Vehicles (RELOC_VEHICLES)
+    - Health Sciences (HEALTH_SCIENCE)
+    - Salaries (SALARIES)
+    - TSM Habitat (TSM)
+    - EU IT (EUIT)
+    - Halloween (HALLOWEEN)
+    - Utility (UTILITY)
+    - Mid or Feed (MIDFEED)
+    - Wifi (WIFI)
+    - Etailing (ETAILING)
+    - San Francisco (SF)
+    - Building Violations (BUILDING_VIOLATION)
+    - US Labor (USLABOR)
+    - Pet Registration (PETREG)
+
+
+Run the downstream benchmark with a specific dataset, model, and encoding scheme:
+```
+python Downstream_Benchmark.py --DataName MIDWEST --EncodingMethod OHE --model LR
+```
+Run the downstream benchmark with a specific dataset but across all available ML model and encoding schemes
+```
+python Downstream_Benchmark.py --DataName MIDWEST
+```
+Run the downstream benchmark with a specific ML model and encoding scheme but across all available datasets
+```
+python Downstream_Benchmark.py --EncodingMethod OHE --model LR
+```
+Run the downstream benchmark with a new data path and specific ML model and encoding scheme
+```
+python Downstream_Benchmark.py --DataName 'datalocation/datafile.csv' --EncodingMethod OHE --model LR
+```
+
+<!-- ## Synthetic Study -->
 
 
 <!-- #### 1. Our Labeled Data 
