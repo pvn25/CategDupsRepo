@@ -84,12 +84,15 @@ python Downstream_Benchmark.py --EncodingMethod OHE --model LR
 
 ## Synthetic Study
 
-Monte Carlo simulations for two different simulation scenarios:
+Monte Carlo simulations studying a complex joint distribution where the features obtained the data columns determine the target based on random sampling of conditional probability tables. This is a two step process.
 
-1. AllX. A complex joint distribution where all features in the data columns determine the target.
+1. Checkpointing. Specify the configuration parameters for the simulation study and log the results.
 
-2. Hyerplane. A distribution where a true hyperplane separates the classes.
+2. Visualizations. Specify the parameter to summarize as part of the box and whisker plot.
 
+
+
+<!-- 2. Hyerplane. A distribution where a true hyperplane separates the classes. -->
 
 <!-- #### 1. Our Labeled Data 
 
