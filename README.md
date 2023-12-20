@@ -30,7 +30,7 @@ Please see `Our Labeled Data` to see the sub-directory organization.
 ## Downstream Benchmark Suite
 
 Available ML models (with their shorthand used in our code file) in our benchmark suite are:
-    - Logisitic Regression (LR)
+    * Logisitic Regression (LR)
     - Random Forest (RF)
     - Artificial neural network (ANN)
     - Support Vector Machines (SVM)
