@@ -62,21 +62,23 @@ Our curated set of 16 downstream datasets (Please refer to our tech report for f
 - Pet Registration (PETREG)
 
 
-Run the downstream benchmark with a specific dataset, model, and encoding scheme:
+Run the downstream benchmark with different settings: 
+
+1. On specific dataset from our curated set of data files, and a specific model and encoding scheme:
 ```
 python Downstream_Benchmark.py --DataName MIDWEST --EncodingMethod OHE --model LR
 ```
-Run the downstream benchmark with a specific dataset but across all available ML model and encoding schemes
+2. On a data with its path and specific ML model and encoding scheme
+```
+python Downstream_Benchmark.py --DataName 'datalocation/datafile.csv' --EncodingMethod OHE --model LR
+```
+3. On specific dataset but across all available ML model and encoding schemes
 ```
 python Downstream_Benchmark.py --DataName MIDWEST
 ```
-Run the downstream benchmark with a specific ML model and encoding scheme but across all available datasets
+4. On specific ML model and encoding scheme but across all available datasets
 ```
 python Downstream_Benchmark.py --EncodingMethod OHE --model LR
-```
-Run the downstream benchmark with a new data path and specific ML model and encoding scheme
-```
-python Downstream_Benchmark.py --DataName 'datalocation/datafile.csv' --EncodingMethod OHE --model LR
 ```
 
 <!-- ## Synthetic Study -->
