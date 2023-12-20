@@ -11,6 +11,7 @@ columns from 231 raw CSV files.
 
 (3) *Synthetic Study.* Use Monte Carlo simulation studies to disentangle the impact with different variables impacting ML discretely and explain the phenomenon.
 
+The tech report for this work is availble [here](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf).
 
 ## Environment Setup
 
@@ -29,7 +30,7 @@ Please see `Our Labeled Data` to see the sub-directory organization.
 
 ## Downstream Benchmark Suite
 
-Available ML models (with their shorthand used in our code file) in our benchmark suite are: 
+Available ML models in our benchmark suite are: 
 - Logisitic Regression (LR)
 - Random Forest (RF)
 - Artificial neural network (ANN)
@@ -43,7 +44,7 @@ Available encoding methods in our benchmark suite are:
 - Transformer encoding (TRANSE)
 - TABBIE (TABBIE)
 
-Our curated set of 16 downstream datasets (Please refer to our tech report for fine-grained stats on them) are:
+Our curated set of 16 downstream datasets (Please refer to our [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf) for details into how they were chosen and fine-grained stats on them) are:
 - Midwest Survey (MIDWEST)
 - Mental Health (MENTAL_HEALTH)
 - Relocated Vehicles (RELOC_VEHICLES)
@@ -62,7 +63,7 @@ Our curated set of 16 downstream datasets (Please refer to our tech report for f
 - Pet Registration (PETREG)
 
 
-Run the downstream benchmark with different settings: 
+Run the downstream benchmark with different configuration settings. Use shorthand notations for model, encoding, data files from above.
 
 1. On specific dataset from our curated set of data files, and a specific model and encoding scheme:
 ```
@@ -81,7 +82,13 @@ python Downstream_Benchmark.py --DataName MIDWEST
 python Downstream_Benchmark.py --EncodingMethod OHE --model LR
 ```
 
-<!-- ## Synthetic Study -->
+## Synthetic Study
+
+Monte Carlo simulations for two different simulation scenarios:
+
+1. AllX. A complex joint distribution where all features in the data columns determine the target.
+
+2. Hyerplane. A distribution where a true hyperplane separates the classes.
 
 
 <!-- #### 1. Our Labeled Data 
