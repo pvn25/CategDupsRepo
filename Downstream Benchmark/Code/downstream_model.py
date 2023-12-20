@@ -18,7 +18,11 @@ from sklearn import metrics
 from Featurize_CorrectEncoding import *
 import h2o
 from h2o.estimators.random_forest import H2ORandomForestEstimator
+from sklearn.metrics import precision_recall_fscore_support
 import time
+from sklearn.svm import SVC
+import xgboost as xgb
+from xgboost import XGBClassifier
 
 maxintval = sys.maxsize
 Hcurstate = 100
@@ -992,3 +996,383 @@ def MLPClassifierr(dataDownstream, y, y_cur,attribute_names,similarity_flag):
 
     return bestPerformingModel, avgsc_train_lst,avgsc_lst,avgsc_hld_lst
 
+def SVMClassifier(dataDownstream, y, y_cur,attribute_names,similarity_flag):
+
+    X_train, X_test,y_train,y_test = train_test_split(dataDownstream,y, test_size=0.2,random_state=Hcurstate)
+    X_train_new = X_train.reset_index(drop=True)
+    y_train_new = y_train.reset_index(drop=True)
+
+    X_test = X_test.reset_index(drop=True)
+    y_test = y_test.reset_index(drop=True)
+
+    X_train_new = X_train_new.values
+    y_train_new = y_train_new.values
+
+    # print(X_train_new)
+
+    k = 5
+    kf = KFold(n_splits=k,random_state=Hcurstate)
+    avg_train_acc,avg_test_acc = 0,0
+
+    val_arr = [0.0001,0.001,0.01,0.1,1,10]
+
+    avgsc_lst,avgsc_train_lst,avgsc_hld_lst = [],[],[]
+    avgsc,avgsc_train,avgsc_hld = 0,0,0
+    full_metrics_micro_lst,full_metrics_macro_lst=[],[]
+    full_metrics_micro_val_lst,full_metrics_macro_val_lst=[],[]
+    full_metrics_micro_train_lst,full_metrics_macro_train_lst=[],[]
+
+    pq = 0
+    for train_index, test_index in kf.split(X_train_new):
+#         if pq == 1: break
+        pq = pq + 1
+        X_train_cur, X_test_cur = X_train_new[train_index], X_train_new[test_index]
+        y_train_cur, y_test_cur = y_train_new[train_index], y_train_new[test_index]
+
+        X_train_cur_df, X_test_cur_df, X_test_df = pd.DataFrame(X_train_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test,columns=attribute_names).reset_index(drop=True)
+#         print('train:')
+#         print(X_train_cur_df)
+#         print('val:')        
+#         print(X_test_cur_df)        
+#         print('test:')        
+#         print(X_test_df)
+        
+        if similarity_flag: all_cols_train,all_cols_test,all_cols_heldtest = FeaturizeSimiarity(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+        else: all_cols_train,all_cols_test,all_cols_heldtest = Featurize(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+
+#         print('train:')        
+        print(all_cols_train.shape)
+        # print(all_cols_train)
+
+        bestPerformingModel = SVC(kernel='rbf',C = 1,random_state=Hcurstate)
+        bestscore = 0
+        for val in val_arr:
+            clf = SVC(kernel='rbf',C = val,random_state=Hcurstate)
+            clf.fit(all_cols_train, y_train_cur)
+            sc = clf.score(all_cols_test, y_test_cur)
+
+            if bestscore < sc:
+                bestscore = sc
+                bestPerformingModel = clf
+
+        bscr_train = bestPerformingModel.score(all_cols_train, y_train_cur)
+        bscr = bestPerformingModel.score(all_cols_test, y_test_cur)
+        bscr_hld = bestPerformingModel.score(all_cols_heldtest, y_test)
+
+
+        y_pred = bestPerformingModel.predict(all_cols_train)
+        full_metrics_micro = precision_recall_fscore_support(y_train_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_train_cur, y_pred, average='macro')
+        
+        full_metrics_micro_train_lst.append(full_metrics_micro)
+        full_metrics_macro_train_lst.append(full_metrics_macro)
+
+        ######
+        y_pred = bestPerformingModel.predict(all_cols_test)
+        # full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test_cur, y_pred, average='macro')
+
+        full_metrics_micro_val_lst.append(full_metrics_micro)
+        full_metrics_macro_val_lst.append(full_metrics_macro)
+        ######
+
+        y_pred = bestPerformingModel.predict(all_cols_heldtest)
+        # full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')
+
+        full_metrics_micro_lst.append(full_metrics_micro)
+        full_metrics_macro_lst.append(full_metrics_macro)
+
+
+        avgsc_train_lst.append(bscr_train)
+        avgsc_lst.append(bscr)
+        avgsc_hld_lst.append(bscr_hld)
+
+
+        avgsc_train = avgsc_train + bscr_train    
+        avgsc = avgsc + bscr
+        avgsc_hld = avgsc_hld + bscr_hld
+
+        print(bscr_train)
+        print(bscr)
+        print(bscr_hld)
+
+    print('5 fold Train, Validation, and Test Accuracies:')
+    print(avgsc_train_lst)
+    print(avgsc_lst)
+    print(avgsc_hld_lst)
+
+    print('Avg Train, Validation, and Test Accuracies:')    
+    print(avgsc_train/k)
+    print(avgsc/k)
+    print(avgsc_hld/k)
+
+    # print(full_metrics_micro_lst)
+    # print(full_metrics_macro_lst)
+
+    train_tuple = CalculatePRF(full_metrics_micro_train_lst,full_metrics_macro_train_lst)
+    test_tuple = CalculatePRF(full_metrics_micro_lst,full_metrics_macro_lst)
+    val_tuple = CalculatePRF(full_metrics_micro_val_lst,full_metrics_macro_val_lst)
+
+    return bestPerformingModel, avgsc_train_lst,avgsc_lst,avgsc_hld_lst,test_tuple,val_tuple,train_tuple
+
+
+def SVMClassifier2(dataDownstream, y, y_cur,attribute_names,similarity_flag):
+
+    X_train, X_test,y_train,y_test = train_test_split(dataDownstream,y, test_size=0.2,random_state=Hcurstate)
+    X_train_new = X_train.reset_index(drop=True)
+    y_train_new = y_train.reset_index(drop=True)
+
+    X_test = X_test.reset_index(drop=True)
+    y_test = y_test.reset_index(drop=True)
+
+    X_train_new = X_train_new.values
+    y_train_new = y_train_new.values
+
+    # print(X_train_new)
+
+    k = 5
+    kf = KFold(n_splits=k,random_state=Hcurstate)
+    avg_train_acc,avg_test_acc = 0,0
+
+    val_arr = [0.0001,0.001,0.01,0.1,1,10]
+    gamma_arr = [0.0001,0.001,0.01,0.1,1,10]
+    
+    avgsc_lst,avgsc_train_lst,avgsc_hld_lst = [],[],[]
+    avgsc,avgsc_train,avgsc_hld = 0,0,0
+    full_metrics_micro_lst,full_metrics_macro_lst=[],[]
+    full_metrics_micro_val_lst,full_metrics_macro_val_lst=[],[]
+    full_metrics_micro_train_lst,full_metrics_macro_train_lst=[],[]
+
+    pq = 0
+    for train_index, test_index in kf.split(X_train_new):
+#         if pq == 1: break
+        pq = pq + 1
+        X_train_cur, X_test_cur = X_train_new[train_index], X_train_new[test_index]
+        y_train_cur, y_test_cur = y_train_new[train_index], y_train_new[test_index]
+
+        X_train_cur_df, X_test_cur_df, X_test_df = pd.DataFrame(X_train_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test,columns=attribute_names).reset_index(drop=True)
+#         print('train:')
+#         print(X_train_cur_df)
+#         print('val:')        
+#         print(X_test_cur_df)        
+#         print('test:')        
+#         print(X_test_df)
+        
+        if similarity_flag: all_cols_train,all_cols_test,all_cols_heldtest = FeaturizeSimiarity(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+        else: all_cols_train,all_cols_test,all_cols_heldtest = Featurize(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+
+#         print('train:')        
+        print(all_cols_train.shape)
+        # print(all_cols_train)
+
+        bestPerformingModel = SVC(kernel='rbf',C = 1,random_state=Hcurstate)
+        bestscore = 0
+        for val in val_arr:
+            for gam_val in gamma_arr:
+                clf = SVC(kernel='rbf',C = val,gamma = gam_val, random_state=Hcurstate)
+                clf.fit(all_cols_train, y_train_cur)
+                sc = clf.score(all_cols_test, y_test_cur)
+
+                if bestscore < sc:
+                    bestscore = sc
+                    bestPerformingModel = clf
+
+        bscr_train = bestPerformingModel.score(all_cols_train, y_train_cur)
+        bscr = bestPerformingModel.score(all_cols_test, y_test_cur)
+        bscr_hld = bestPerformingModel.score(all_cols_heldtest, y_test)
+
+
+        y_pred = bestPerformingModel.predict(all_cols_train)
+        full_metrics_micro = precision_recall_fscore_support(y_train_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_train_cur, y_pred, average='macro')
+        
+        full_metrics_micro_train_lst.append(full_metrics_micro)
+        full_metrics_macro_train_lst.append(full_metrics_macro)
+
+        ######
+        y_pred = bestPerformingModel.predict(all_cols_test)
+        # full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test_cur, y_pred, average='macro')
+
+        full_metrics_micro_val_lst.append(full_metrics_micro)
+        full_metrics_macro_val_lst.append(full_metrics_macro)
+        ######
+
+        y_pred = bestPerformingModel.predict(all_cols_heldtest)
+        # full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')
+
+        full_metrics_micro_lst.append(full_metrics_micro)
+        full_metrics_macro_lst.append(full_metrics_macro)
+
+
+        avgsc_train_lst.append(bscr_train)
+        avgsc_lst.append(bscr)
+        avgsc_hld_lst.append(bscr_hld)
+
+
+        avgsc_train = avgsc_train + bscr_train    
+        avgsc = avgsc + bscr
+        avgsc_hld = avgsc_hld + bscr_hld
+
+        print(bscr_train)
+        print(bscr)
+        print(bscr_hld)
+
+    print('5 fold Train, Validation, and Test Accuracies:')
+    print(avgsc_train_lst)
+    print(avgsc_lst)
+    print(avgsc_hld_lst)
+
+    print('Avg Train, Validation, and Test Accuracies:')    
+    print(avgsc_train/k)
+    print(avgsc/k)
+    print(avgsc_hld/k)
+
+    # print(full_metrics_micro_lst)
+    # print(full_metrics_macro_lst)
+
+    train_tuple = CalculatePRF(full_metrics_micro_train_lst,full_metrics_macro_train_lst)
+    test_tuple = CalculatePRF(full_metrics_micro_lst,full_metrics_macro_lst)
+    val_tuple = CalculatePRF(full_metrics_micro_val_lst,full_metrics_macro_val_lst)
+
+    return bestPerformingModel, avgsc_train_lst,avgsc_lst,avgsc_hld_lst,test_tuple,val_tuple,train_tuple
+
+def XGBClassifierrr(dataDownstream, y, y_cur,attribute_names,similarity_flag):
+
+#     similarity_flag = 0
+    Hcurstate = 100
+
+    X_train, X_test,y_train,y_test = train_test_split(dataDownstream,y, test_size=0.2,random_state=Hcurstate)
+    X_train_new = X_train.reset_index(drop=True)
+    y_train_new = y_train
+
+    X_test = X_test.reset_index(drop=True)
+    # y_test = y_test.reset_index(drop=True)
+
+    X_train_new = X_train_new.values
+    # y_train_new = y_train_new.values
+
+    # print(X_train_new)
+
+    k = 5
+    kf = KFold(n_splits=k,random_state=Hcurstate)
+    avg_train_acc,avg_test_acc = 0,0
+
+    n_estimators_grid = [5,25,50,100]
+    max_depth_grid = [5,25,50,100]  
+
+#     n_estimators_grid = [5]
+#     max_depth_grid = [5]  
+
+    avgsc_lst,avgsc_train_lst,avgsc_hld_lst = [],[],[]
+    avgsc,avgsc_train,avgsc_hld = 0,0,0
+    full_metrics_micro_lst,full_metrics_macro_lst=[],[]
+    full_metrics_micro_val_lst,full_metrics_macro_val_lst=[],[]
+    full_metrics_micro_train_lst,full_metrics_macro_train_lst=[],[]
+
+    pq = 0
+    for train_index, test_index in kf.split(X_train_new):
+    #         if pq == 1: break
+        pq = pq + 1
+
+        X_train_cur, X_test_cur = X_train_new[train_index], X_train_new[test_index]
+        y_train_cur, y_test_cur = y_train_new[train_index], y_train_new[test_index]
+
+    #     print(X_train_cur.shape)
+
+        X_train_cur_df, X_test_cur_df, X_test_df = pd.DataFrame(X_train_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test_cur,columns=attribute_names).reset_index(drop=True),pd.DataFrame(X_test,columns=attribute_names).reset_index(drop=True)
+    #         print(X_train_cur_df)
+
+        if similarity_flag: all_cols_train,all_cols_test,all_cols_heldtest = FeaturizeSimiarity(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+        else: all_cols_train,all_cols_test,all_cols_heldtest = Featurize(X_train_cur_df,X_test_cur_df,X_test_df,attribute_names,y_cur)
+
+        print(all_cols_train.shape)
+    #     print(all_cols_train)
+
+    #     bestPerformingModel = RandomForestClassifier(n_estimators=10,max_depth=5, random_state=Hcurstate)
+        bestPerformingModel = XGBClassifier(max_depth = 1,n_estimators=1, random_state=Hcurstate)
+        bestscore = 0
+        for ne in n_estimators_grid:
+            for md in max_depth_grid:
+    #             clf = RandomForestClassifier(n_estimators=ne,max_depth=md, random_state=Hcurstate)
+                clf = XGBClassifier(max_depth = md,n_estimators=ne, random_state=Hcurstate)
+    #             y_train_cur = le.fit_transform(y_train_cur)
+                all_cols_train = np.array(all_cols_train)
+
+    #             y_test_cur = le.fit_transform(y_test_cur)
+                all_cols_test = np.array(all_cols_test)
+
+                clf.fit(all_cols_train, y_train_cur)
+                sc = clf.score(all_cols_test, y_test_cur)
+                print("NE:MD", ne,md)
+                print("Current Score:", sc)
+                if bestscore < sc:
+                    bestscore = sc
+                    bestPerformingModel = clf
+
+        bscr_train = bestPerformingModel.score(all_cols_train, y_train_cur)
+        bscr = bestPerformingModel.score(all_cols_test, y_test_cur)
+        bscr_hld = bestPerformingModel.score(all_cols_heldtest, y_test)    
+
+
+        y_pred = bestPerformingModel.predict(all_cols_train)
+        full_metrics_micro = precision_recall_fscore_support(y_train_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_train_cur, y_pred, average='macro')
+
+        full_metrics_micro_train_lst.append(full_metrics_micro)
+        full_metrics_macro_train_lst.append(full_metrics_macro)
+
+        ######
+        y_pred = bestPerformingModel.predict(all_cols_test)
+        # full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test_cur, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test_cur, y_pred, average='macro')
+
+        full_metrics_micro_val_lst.append(full_metrics_micro)
+        full_metrics_macro_val_lst.append(full_metrics_macro)
+        ######
+
+        y_pred = bestPerformingModel.predict(all_cols_heldtest)
+        # full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='micro')
+        full_metrics_micro = precision_recall_fscore_support(y_test, y_pred, average='weighted')
+        full_metrics_macro = precision_recall_fscore_support(y_test, y_pred, average='macro')
+
+        full_metrics_micro_lst.append(full_metrics_micro)
+        full_metrics_macro_lst.append(full_metrics_macro)
+
+        avgsc_train_lst.append(bscr_train)
+        avgsc_lst.append(bscr)
+        avgsc_hld_lst.append(bscr_hld)
+
+        avgsc_train = avgsc_train + bscr_train    
+        avgsc = avgsc + bscr
+        avgsc_hld = avgsc_hld + bscr_hld
+
+        print(bscr_train)
+        print(bscr)
+        print(bscr_hld)
+
+    print('5 fold Train, Validation, and Test Accuracies:')
+    print(avgsc_train_lst)
+    print(avgsc_lst)
+    print(avgsc_hld_lst)
+
+    print('Avg Train, Validation, and Test Accuracies:')    
+    print(avgsc_train/k)
+    print(avgsc/k)
+    print(avgsc_hld/k)
+
+    # print(full_metrics_micro_lst)
+    # print(full_metrics_macro_lst)
+
+    train_tuple = CalculatePRF(full_metrics_micro_train_lst,full_metrics_macro_train_lst)
+    test_tuple = CalculatePRF(full_metrics_micro_lst,full_metrics_macro_lst)
+    val_tuple = CalculatePRF(full_metrics_micro_val_lst,full_metrics_macro_val_lst)
+
+    return bestPerformingModel, avgsc_train_lst,avgsc_lst,avgsc_hld_lst,test_tuple,val_tuple,train_tuple
