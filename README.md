@@ -2,14 +2,13 @@
 
 # Studying the Impact of Categorical Duplicates on ML
 
-In this work, we take the first step towards empirically characterizing the impact of Categorical duplicates on ML classification with a three-pronged approach. Our benchmark comprises of three components.
+In this work, we take a step towards empirically characterizing the impact of Categorical duplicates on ML classification task with a three-pronged approach. Our benchmark comprises of three components.
 
-(1) *Our Hand-Labeled Datasets.* We create the first large labeled data where true entities within a Categorical column are annotated with duplicate categories.  Our data includes 1262 string Categorical
-columns from 231 raw CSV files.
+(1) *Our Hand-Labeled Datasets.* We create the first large labeled data where true entities within a Categorical column are annotated with duplicate categories.  Our data includes 1262 string Categorical columns from 231 raw CSV files.
 
-(2) *Downstream Benchmark Suite.* Use 16 real-world datasets to make empirical observations on the effect of Categorical duplicates on five popular classifiers and five encoding mechanisms. 
+(2) *Downstream Benchmark Suite.* Uses 16 real-world datasets to make empirical observations on the effect of Categorical duplicates on five popular classifiers and five encoding mechanisms. 
 
-(3) *Synthetic Study.* Use Monte Carlo simulation studies to disentangle the impact with different variables impacting ML discretely and explain the phenomenon.
+(3) *Synthetic Study.* Includes Monte Carlo simulation studies to disentangle the impact with different variables impacting ML discretely and better explain the phenomenon.
 
 The tech report for this work is availble [here](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf).
 
