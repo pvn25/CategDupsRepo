@@ -24,7 +24,7 @@ pip install -r requirements.txt
 
 ## Our Labeled Datasets
 
-Please see `Our Labeled Data` to see the sub-directory organization.
+Please see `Our Labeled Data\` directory to see the sub-directory organization.
 
 
 ## Downstream Benchmark Suite
