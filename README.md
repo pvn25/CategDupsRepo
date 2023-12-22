@@ -83,9 +83,9 @@ Please see `Our Labeled Data\` directory to see the sub-directory organization.
 
 - Results are written in a directory `Results\` in a file titled `DATANAME_results.csv` The file has the following schema:
 
-```
-dataset,DuplicationType,encoding,model,lift_acc,overfitting_gap
-```
+    ```
+    dataset,DuplicationType,encoding,model,lift_acc,overfitting_gap
+    ```
 
     - `DuplicationType` takes integers corresponding to different duplication types (which we want to study while deduplicating the rest with Truth) presented in Table 3 of the [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf). 
         - 0: Retain all duplication type in Raw data
