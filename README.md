@@ -14,7 +14,7 @@ The tech report for this work is availble [here](https://adalabucsd.github.io/pa
 
 ## Environment Setup
 
-To run the benchmark, first make sure that the environment is set up and all the packages stated in the `requirements.txt` file are installed. Use the following commands:
+To run the benchmark, first make sure that the environment is set up and all the packages stated in the `requirements.txt` file are installed. Use the following commands with `Python3.8+`:
 
 ```
 virtualenv CategDedupBench
@@ -29,12 +29,12 @@ Please see `Our Labeled Data` to see the sub-directory organization.
 
 ## Downstream Benchmark Suite
 
-Available ML models in our benchmark suite are: 
-- Logisitic Regression (LR)
-- Random Forest (RF)
-- Artificial neural network (ANN)
-- Support Vector Machines (SVM)
-- XGBoost (XGB)
+- Available ML models in our benchmark suite are: 
+    - Logisitic Regression (LR)
+    - Random Forest (RF)
+    - Artificial neural network (ANN)
+    - Support Vector Machines (SVM)
+    - XGBoost (XGB)
 
 Available encoding methods in our benchmark suite are:
 - One-hot encoding (OHE)
@@ -90,14 +90,14 @@ dataset,DuplicationType,encoding,model,lift_acc,overfitting_gap
 - `DuplicationType` takes integers corresponding to different duplication types (which we want to study while deduplicating the rest with Truth) presented in Table 3 of the [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf). 
     - 0: Retain all duplication type in Raw data
     - Retain the following types exclusively in the Raw data
-    - 1: Capitalization type
-    - 2: Misspellings
-    - 3: Abbreviation
-    - 4: Difference of Special Characters
-    - 5: Different Ordering
-    - 6: Synonyms
-    - 7: Presence of Extra Information
-    - 8: Different grammar
+        - 1: Capitalization type
+        - 2: Misspellings
+        - 3: Abbreviation
+        - 4: Difference of Special Characters
+        - 5: Different Ordering
+        - 6: Synonyms
+        - 7: Presence of Extra Information
+        - 8: Different grammar
 
 - `encoding` and `model` takes shorthand notations from above
 
