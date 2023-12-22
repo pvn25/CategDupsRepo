@@ -36,33 +36,33 @@ Please see `Our Labeled Data` to see the sub-directory organization.
     - Support Vector Machines (SVM)
     - XGBoost (XGB)
 
-Available encoding methods in our benchmark suite are:
-- One-hot encoding (OHE)
-- Similarity encoding (SIME)
-- String encoding (STRE)
-- Transformer encoding (TRANSE)
-- TABBIE (TABBIE)
+- Available encoding methods in our benchmark suite are:
+    - One-hot encoding (OHE)
+    - Similarity encoding (SIME)
+    - String encoding (STRE)
+    - Transformer encoding (TRANSE)
+    - TABBIE (TABBIE)
 
-Our curated set of 16 downstream datasets (Please refer to our [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf) for details into how they were chosen and fine-grained stats on them) are:
-- Midwest Survey (MIDWEST)
-- Mental Health (MENTAL_HEALTH)
-- Relocated Vehicles (RELOC_VEHICLES)
-- Health Sciences (HEALTH_SCIENCE)
-- Salaries (SALARIES)
-- TSM Habitat (TSM)
-- EU IT (EUIT)
-- Halloween (HALLOWEEN)
-- Utility (UTILITY)
-- Mid or Feed (MIDFEED)
-- Wifi (WIFI)
-- Etailing (ETAILING)
-- San Francisco (SF)
-- Building Violations (BUILDING_VIOLATION)
-- US Labor (USLABOR)
-- Pet Registration (PETREG)
+- Our curated set of 16 downstream datasets (Please refer to our [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf) for details into how they were chosen and fine-grained stats on them) are:
+    - Midwest Survey (MIDWEST)
+    - Mental Health (MENTAL_HEALTH)
+    - Relocated Vehicles (RELOC_VEHICLES)
+    - Health Sciences (HEALTH_SCIENCE)
+    - Salaries (SALARIES)
+    - TSM Habitat (TSM)
+    - EU IT (EUIT)
+    - Halloween (HALLOWEEN)
+    - Utility (UTILITY)
+    - Mid or Feed (MIDFEED)
+    - Wifi (WIFI)
+    - Etailing (ETAILING)
+    - San Francisco (SF)
+    - Building Violations (BUILDING_VIOLATION)
+    - US Labor (USLABOR)
+    - Pet Registration (PETREG)
 
 
-Run the downstream benchmark with different configuration settings. Use shorthand notations for model, encoding, data files from above.
+- Run the downstream benchmark with different configuration settings. Use shorthand notations for model, encoding, data files from above.
 
 1. On specific dataset from our curated set of data files, and a specific model and encoding scheme:
 ```
@@ -81,29 +81,29 @@ python Downstream_Benchmark.py --DataName MIDWEST
 python Downstream_Benchmark.py --EncodingMethod OHE --model LR
 ```
 
-Results are written in a directory `Results` in a file titled `DATANAME_results.csv.` The file has the following schema
+- Results are written in a directory `Results` in a file titled `DATANAME_results.csv.` The file has the following schema
 
 ```
 dataset,DuplicationType,encoding,model,lift_acc,overfitting_gap
 ```
 
-- `DuplicationType` takes integers corresponding to different duplication types (which we want to study while deduplicating the rest with Truth) presented in Table 3 of the [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf). 
-    - 0: Retain all duplication type in Raw data
-    - Retain the following types exclusively in the Raw data
-        - 1: Capitalization type
-        - 2: Misspellings
-        - 3: Abbreviation
-        - 4: Difference of Special Characters
-        - 5: Different Ordering
-        - 6: Synonyms
-        - 7: Presence of Extra Information
-        - 8: Different grammar
+    - `DuplicationType` takes integers corresponding to different duplication types (which we want to study while deduplicating the rest with Truth) presented in Table 3 of the [tech report](https://adalabucsd.github.io/papers/TR_2023_CategDedup.pdf). 
+        - 0: Retain all duplication type in Raw data
+        - Retain the following types exclusively in the Raw data
+            - 1: Capitalization type
+            - 2: Misspellings
+            - 3: Abbreviation
+            - 4: Difference of Special Characters
+            - 5: Different Ordering
+            - 6: Synonyms
+            - 7: Presence of Extra Information
+            - 8: Different grammar
 
-- `encoding` and `model` takes shorthand notations from above
+    - `encoding` and `model` takes shorthand notations from above
 
-- `lift_acc` denotes the lift in % diagonal accuracy with Truth relative to Raw data
+    - `lift_acc` denotes the lift in % diagonal accuracy with Truth relative to Raw data
 
-- `overfitting_gap` denotes the difference between train and validation accuracies with Truth relative to Raw data
+    - `overfitting_gap` denotes the difference between train and validation accuracies with Truth relative to Raw data
 
 ## Synthetic Study
 
