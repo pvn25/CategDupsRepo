@@ -85,7 +85,7 @@ python Downstream_Benchmark.py --EncodingMethod OHE --model LR
 
 Monte Carlo simulations studying a complex joint distribution where the features obtained the data columns determine the target based on random sampling of conditional probability tables. This is a two step process.
 
-1. Checkpointing. Specify the configuration parameters for the simulation study and log the results. The default directory for writing the log files is set to `logs/synthetic` To understand the influence of each explanatory variable (EV)on ML, we vary one parameter at a time while fixing the rest. Simulations can be run under different setting with the following shell scripts
+1. Checkpointing. Specify the configuration parameters for the simulation study and log the results. The default directory for writing the log files is set to `logs/`. To understand the influence of each explanatory variable (EV) on ML, we vary one parameter at a time while fixing the rest. Simulations can be run under different setting with the following shell scripts
 
 - Varying the number of training examples in the dataset while the parameters that characterize the amount of duplicates are kept fixed
 ```
@@ -101,8 +101,9 @@ sh RunskewedDuplication.sh
 
 2. Visualizations. Specify the parameter to summarize as part of the box and whisker plot. Visualize with the following self-explanatory jupyter notebook.
 
-
-
+```
+VisualizePlots.ipynb
+```
 
 
 <!-- 2. Hyerplane. A distribution where a true hyperplane separates the classes. -->
