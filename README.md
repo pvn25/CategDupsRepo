@@ -64,24 +64,24 @@ Please see `Our Labeled Data\` directory to see the sub-directory organization.
 
 - Run the downstream benchmark with different configuration settings. Use shorthand notations for model, encoding, data files from above.
 
-1. On specific dataset from our curated set of data files, and a specific model and encoding scheme:
-```
-python Downstream_Benchmark.py --DataName MIDWEST --EncodingMethod OHE --model LR
-```
-2. On a data with its path and specific ML model and encoding scheme
-```
-python Downstream_Benchmark.py --DataName 'datalocation/datafile.csv' --EncodingMethod OHE --model LR
-```
-3. On specific dataset but across all available ML model and encoding schemes
-```
-python Downstream_Benchmark.py --DataName MIDWEST
-```
-4. On specific ML model and encoding scheme but across all available datasets
-```
-python Downstream_Benchmark.py --EncodingMethod OHE --model LR
-```
+    1. On specific dataset from our curated set of data files, and a specific model and encoding scheme:
+    ```
+    python Downstream_Benchmark.py --DataName MIDWEST --EncodingMethod OHE --model LR
+    ```
+    2. On a data with its path and specific ML model and encoding scheme
+    ```
+    python Downstream_Benchmark.py --DataName 'datalocation/datafile.csv' --EncodingMethod OHE --model LR
+    ```
+    3. On specific dataset but across all available ML model and encoding schemes
+    ```
+    python Downstream_Benchmark.py --DataName MIDWEST
+    ```
+    4. On specific ML model and encoding scheme but across all available datasets
+    ```
+    python Downstream_Benchmark.py --EncodingMethod OHE --model LR
+    ```
 
-- Results are written in a directory `Results` in a file titled `DATANAME_results.csv.` The file has the following schema
+- Results are written in a directory `Results\` in a file titled `DATANAME_results.csv` The file has the following schema:
 
 ```
 dataset,DuplicationType,encoding,model,lift_acc,overfitting_gap
